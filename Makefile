@@ -6,7 +6,7 @@
 # *********************************************
 # */
 
-CCFLAGS = -ggdb -Wall
+CCFLAGS = -ggdb -Wall -lm
 
 all: compile constfolding strengthreduct 
 
