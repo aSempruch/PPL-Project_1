@@ -190,7 +190,7 @@ static void print()
     }
     
     char a = token;
-    //next_token(); BIDON
+    next_token();
     
     CodeGen(OUTPUTAI, 0, (a-'a')*4, EMPTY_FIELD);
 }
