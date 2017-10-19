@@ -105,7 +105,7 @@ static int variable()
 		exit(EXIT_FAILURE);
 	}
 	reg = next_register();
-	CodeGen(LOADAI, 0, (token-'a')*4, reg); /* token - 'a' is offset of varible, *4 for byte address */
+	CodeGen(LOADAI, 0, (token-'a')*4, reg); /* token - 'a' is offset of variable, *4 for byte address */
 	next_token();
 	return reg;
 }
@@ -114,74 +114,129 @@ static int expr()
 {
 	int reg, left_reg, right_reg;
 
-	switch (token) {
-
-	case '+':
-		next_token();
-		left_reg = expr();
-		right_reg = expr();
-		reg = next_register();
-		CodeGen(ADD, left_reg, right_reg, reg);
-		return reg;
-
-
-        case 'f':
-                return variable();
-
-
-	case '1':
-                return digit();
-
-	case '2':
-                return digit();
-
-	case '3':
-                return digit();
-
-	default:
-		ERROR("Symbol %c unknown\n", token);
-		exit(EXIT_FAILURE);
+	if(is_digit(token))
+            return digit();
+        
+        if(is_identifier(token))
+            return variable();
+        
+        switch(token){
+            case '+':
+                next_token();
+                left_reg = expr();
+                right_reg = expr();
+                reg = next_register();
+                CodeGen(ADD, left_reg, right_reg, reg);
+                return reg;
+            case '-':
+                next_token();
+                left_reg = expr();
+                right_reg = expr();
+                reg = next_register();
+                CodeGen(SUB, left_reg, right_reg, reg);
+                return reg;
+            case '*':
+                next_token();
+                left_reg = expr();
+                right_reg = expr();
+                reg = next_register();
+                CodeGen(MUL, left_reg, right_reg, reg);
+                return reg;
+            case '/':
+                next_token();
+                left_reg = expr();
+                right_reg = expr();
+                CodeGen(DIV, left_reg, right_reg, reg);
+                return reg;
 	}
+        
+        ERROR("Symbol %c unknown\n", token);
+        exit(EXIT_FAILURE);
 }
 
 static void assign()
 {
-	/* YOUR CODE GOES HERE */
+    if(!is_identifier(token)){
+        ERROR("Expected identifier but got '%c'\n", token);
+        exit(EXIT_FAILURE);
+    }
+    
+    char a = token;
+    next_token();
+    
+    if(token != '='){
+        ERROR("Expected '=' but got '%c'\n", token);
+        exit(EXIT_FAILURE);
+    }
+    
+    next_token();
+    char b = expr();
+    
+    CodeGen(STOREAI, b, 0, (a-'a')*4);
 }
 
 static void print()
 {
-	/* YOUR CODE GOES HERE */
+    if(token != '!'){
+        ERROR("Expected '!' but got '%c'\n", token);
+        exit(EXIT_FAILURE);
+    }
+    
+    next_token();
+    
+    if(!is_identifier(token)){
+        ERROR("Expected identifier but got '%c'\n", token);
+        exit(EXIT_FAILURE);
+    }
+    
+    char a = token;
+    //next_token(); BIDON
+    
+    CodeGen(OUTPUTAI, 0, (a-'a')*4, EMPTY_FIELD);
 }
 
 static void stmt()
 {
-	/* YOUR CODE GOES HERE */
+    if(is_identifier(token))
+        assign();
+    
+    else if (token == '!')
+        print();
+    
+    else{
+        ERROR("Expected '!' or identifier but got '%c'\n", token);
+        exit(EXIT_FAILURE);
+    }
 }
 
 static void morestmts()
 {
-	/* YOUR CODE GOES HERE */
+    if(token == '.')
+        return;
+    
+    if(token != ';'){
+        ERROR("Expected ';' but got '%c'\n", token);
+        exit(EXIT_FAILURE);
+    }
+    
+    next_token();
+    stmtlist();
 }
 
 static void stmtlist()
 {
-	/* YOUR CODE GOES HERE */
+    stmt();
+    morestmts();
 }
 
 static void program()
 {
-	/* YOUR CODE GOES HERE */
+    stmtlist();
 
-        /* THIS CODE IS BOGUS */
-        int dummy;
-        /* THIS CODE IS BOGUS */
-	dummy = expr();
-
-	if (token != '.') {
-	  ERROR("Program error.  Current input symbol is %c\n", token);
-	  exit(EXIT_FAILURE);
-	};
+    if (token != '.') {
+        ERROR("Program error.  Current input symbol is %c\n", token);
+        exit(EXIT_FAILURE);
+    };
 }
 
 /*************************************************************************/
