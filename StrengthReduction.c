@@ -63,10 +63,10 @@ int main()
 
 	Instruction *ptr = head;
         
-        /*while(ptr->next != NULL){
+        while(ptr->next != NULL){
             Optimize(ptr, ptr->next, ptr->next->next);
             ptr = ptr->next;
-        }*/
+        }
 
 	if (head) 
 		PrintInstructionList(stdout, head);
