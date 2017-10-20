@@ -35,6 +35,11 @@ void Optimize(Instruction *i1, Instruction *i2, Instruction *i3){
                 i1->field1 = i2->field1;
                 i1->field2 = log;
                 i1->field3 = i2->field3;
+				free(i2);
+            	i1->next = i3;
+            	if(i3 != NULL)
+                	i3->prev = i1;
+
             }
             else if(i2->opcode == MUL) { //MUL detected - performing optimization
                 int log = logb2((double)i1->field1);
@@ -42,12 +47,12 @@ void Optimize(Instruction *i1, Instruction *i2, Instruction *i3){
                 i1->field1 = i2->field1;
                 i1->field2 = log;
                 i1->field3 = i2->field3;
+				free(i2);
+            	i1->next = i3;
+            	if(i3 != NULL)
+                	i3->prev = i1;
             }
-            free(i2);
-            i1->next = i3;
-            if(i3 != NULL)
-                i3->prev = i1;
-        }
+		}
     }
 }
 
