@@ -146,12 +146,13 @@ static int expr()
                 next_token();
                 left_reg = expr();
                 right_reg = expr();
+				reg = next_register();
                 CodeGen(DIV, left_reg, right_reg, reg);
                 return reg;
-	}
+		}
+		ERROR("Symbol %c unknown\n", token);
+       	exit(EXIT_FAILURE);      
         
-        ERROR("Symbol %c unknown\n", token);
-        exit(EXIT_FAILURE);
 }
 
 static void assign()
