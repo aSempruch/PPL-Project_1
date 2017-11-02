@@ -29,30 +29,30 @@ void Optimize(Instruction *i1, Instruction *i2, Instruction *i3){
         int val = i1->field1;
         
         if(val && (!(val&(val-1)))){ //val is a power of 2
-            if(i2->opcode == DIV){ //DIV detected - performing optimization
+            if(i2->opcode == DIV && i2->field2 == i1->field2){ //DIV detected - performing optimization
                 int log = logb2((double)i1->field1);
                 i1->opcode = RSHIFTI;
                 i1->field1 = i2->field1;
                 i1->field2 = log;
                 i1->field3 = i2->field3;
-				free(i2);
+		free(i2);
             	i1->next = i3;
             	if(i3 != NULL)
                 	i3->prev = i1;
 
             }
-            else if(i2->opcode == MUL) { //MUL detected - performing optimization
+            else if(i2->opcode == MUL && i2->field2 == i1->field2) { //MUL detected - performing optimization
                 int log = logb2((double)i1->field1);
                 i1->opcode = LSHIFTI;
                 i1->field1 = i2->field1;
                 i1->field2 = log;
                 i1->field3 = i2->field3;
-				free(i2);
+		free(i2);
             	i1->next = i3;
             	if(i3 != NULL)
                 	i3->prev = i1;
             }
-		}
+        }
     }
 }
 
