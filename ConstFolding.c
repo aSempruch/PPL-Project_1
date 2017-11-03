@@ -13,10 +13,10 @@
 #include "InstrUtils.h"
 #include "Utils.h"
 
-void Optimize(Instruction *i1, Instruction *i2, Instruction *i3){
+void OptimizeConstFolding(Instruction *i1, Instruction *i2, Instruction *i3){
     if(i1->opcode == LOADI && i2->opcode == LOADI){ //Found two consecutive LOADI instructions
         
-        if(i3->opcode == ADD || i3->opcode == SUB || i3->opcode == MUL){ //Found OP
+        if((i3->opcode == ADD || i3->opcode == SUB || i3->opcode == MUL) && i1->field2 == i3->field1 && i2->field2 == i3->field2){ //Found OP
             int a = i1->field1;
             int b = i2->field1;
             int c;
@@ -53,7 +53,7 @@ int main()
 
 	Instruction *ptr = head;
         while(ptr->next->next != NULL){
-            Optimize(ptr, ptr->next, ptr->next->next);
+            OptimizeConstFolding(ptr, ptr->next, ptr->next->next);
             ptr = ptr->next;
         }
 

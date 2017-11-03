@@ -23,7 +23,7 @@ int logb2(double num){
     return result;
 }
 
-void Optimize(Instruction *i1, Instruction *i2, Instruction *i3){
+void OptimizeStrengthReduction(Instruction *i1, Instruction *i2, Instruction *i3){
     
     if(i1->opcode == LOADI){ //Found LOADI operation
         int val = i1->field1;
@@ -69,7 +69,7 @@ int main()
 	Instruction *ptr = head;
         
         while(ptr->next != NULL){
-            Optimize(ptr, ptr->next, ptr->next->next);
+            OptimizeStrengthReduction(ptr, ptr->next, ptr->next->next);
             ptr = ptr->next;
         }
 
